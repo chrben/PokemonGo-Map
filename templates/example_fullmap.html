@@ -10,7 +10,22 @@
     <body>
         <h1>Flask Google Maps Full Map Example</h1>
         {{ fullmap.html }}
-
+	<script type="text/javascript">
+		setInterval(function() {
+		elms = document.getElementsByClassName('countdown');
+		for(var i = 0; i < elms.length; i++) {
+			var expiredate = new Date(elms[i].dataset.timestamp * 1000);
+			var diff = Math.floor((expiredate - new Date()) / 1000);
+			if (diff > 0) {
+				var str = (diff/60>=1?Math.floor(diff/60) + ' minutes, ':'') + diff%60 + ' seconds from now';
+			} else {
+				diff = Math.abs(diff);
+				var str = (diff/60>=1?Math.floor(diff/60) + ' minutes, ':'') + diff%60 + ' seconds ago';
+			}
+			elms[i].innerHTML = str;
+		}
+	}, 1000);
+	</script>
     </body>
 </html>
 

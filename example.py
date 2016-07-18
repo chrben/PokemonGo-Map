@@ -20,6 +20,7 @@ import pokemon_pb2
 from google.protobuf.internal import encoder
 from s2sphere import *
 from datetime import datetime
+from datetime import timedelta
 from geopy.geocoders import GoogleV3
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -444,10 +445,12 @@ def main():
             time_to_hidden = poke.TimeTillHiddenMs
             left = '%d hours %d minutes %d seconds' % time_left(time_to_hidden)
             remaining = '%s remaining' % (left)
+            expiresat = datetime.now() + timedelta(milliseconds=time_to_hidden)
+            expirestr = 'Expires at %s' % expiresat.strftime('%y/%m/%d %H:%M:%S')
             pid = str(poke.pokemon.PokemonId)
             label = (
                         '<div style=\'position:float; top:0;left:0;\'><small><a href=\'http://www.pokemon.com/us/pokedex/'+pid+'\' target=\'_blank\' title=\'View in Pokedex\'>#'+pid+'</a></small> - <b>'+pokemonsJSON[poke.pokemon.PokemonId - 1]['Name']+'</b></div>'
-                        '<center>'+remaining.replace('0 hours ','').replace('0 minutes ','')+'</center>'
+                        '<center>'+expirestr+'<br/><span class=\'countdown\' data-timestamp=\''+expiresat.strftime('%s')+'\'></span></center>'
                     )
             if args.china:
                 poke.Latitude, poke.Longitude = transform_from_wgs_to_gcj(Location(poke.Latitude, poke.Longitude))
@@ -560,4 +563,4 @@ def fullmap():
 
 if __name__ == "__main__":
     register_background_thread(initial_registration=True)
-    app.run(debug=True, threaded=True)
+    app.run(debug=True, threaded=True, host="0.0.0.0")
